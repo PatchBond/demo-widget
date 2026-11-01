@@ -1,0 +1,8 @@
+{
+  "name": "demo-widget",
+  "version": "0.1.0",
+  "description": "A tiny job queue — PatchBond's public demo repo",
+  "type": "module",
+  "scripts": { "test": "node --test" },
+  "license": "MIT"
+}
