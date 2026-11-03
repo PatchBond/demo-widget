@@ -15,10 +15,17 @@ export class Queue {
   async #drain() {
     if (this.#running) return;
     this.#running = true;
-    while (this.#jobs.length) {
-      const job = this.#jobs.shift();
-      await job();
+    try {
+      while (this.#jobs.length) {
+        const job = this.#jobs.shift();
+        try {
+          await job();
+        } catch {
+          // A failing job must not wedge the queue or let the next job start early.
+        }
+      }
+    } finally {
+      this.#running = false;
     }
-    this.#running = false;
   }
 }
