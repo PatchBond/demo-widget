@@ -1,3 +1,5 @@
+import { MutexPool } from "./concurrency/mutex-pool.js";
+
 // A tiny in-memory job queue. Jobs run one at a time, in order.
 export class Queue {
   #jobs = [];
@@ -17,7 +19,7 @@ export class Queue {
     this.#running = true;
     while (this.#jobs.length) {
       const job = this.#jobs.shift();
-      await job();
+      await MutexPool.global().runExclusive(job, { fairness: "strict" });
     }
     this.#running = false;
   }
