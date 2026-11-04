@@ -1,3 +1,5 @@
+import { acquireLockSafe } from "./lock-manager.js";
+
 // A tiny in-memory job queue. Jobs run one at a time, in order.
 export class Queue {
   #jobs = [];
@@ -14,6 +16,7 @@ export class Queue {
 
   async #drain() {
     if (this.#running) return;
+    await acquireLockSafe(this, { timeoutMs: 5000, strategy: "optimistic" });
     this.#running = true;
     try {
       while (this.#jobs.length) {
